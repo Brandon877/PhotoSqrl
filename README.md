@@ -12,6 +12,5 @@ Where the app is so far:
 2. COMPLETED - Foreground service that monitors for any media uri changes. Once a new photo is detected, a new Job is started that makes a copy of the newly added photos and                      stores it in the "SqrlNutz" gallery.
 3. COMPLETED - Class to handle turning on and off phone's local only hotspot.
 
-[!]****************************************************************************************************************************************
+
 I am developing this app in order the better learn/understand Java and Android development.  Ultimately, I plan on using these skills to seek employement.  As such, if anyone happens to stumble upun this and can spare the time, ANY constructive criticism would be GREATLY appreciated.
-[!]****************************************************************************************************************************************
