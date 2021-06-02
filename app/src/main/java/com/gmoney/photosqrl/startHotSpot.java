@@ -1,17 +1,11 @@
 package com.gmoney.photosqrl;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 public class startHotSpot {
@@ -64,19 +58,6 @@ public class startHotSpot {
             hotspotReservation.close();
         }
     }
-
-
-
-/*
-    public void requestWifiPermissions() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            final String[] permissions = new String[] {Manifest.permission.CHANGE_WIFI_STATE,
-                    Manifest.permission.ACCESS_FINE_LOCATION};
-            ActivityCompat.requestPermissions(this, permissions, 0);
-        }
-    }
-*/
 
     public boolean checkLocationPermission() {
             if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

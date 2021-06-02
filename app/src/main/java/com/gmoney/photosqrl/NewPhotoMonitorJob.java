@@ -17,16 +17,10 @@ import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.webkit.MimeTypeMap;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
-
-import androidx.documentfile.provider.DocumentFile;
-import androidx.loader.content.CursorLoader;
 
 import java.io.File;
 import java.io.FileDescriptor;

@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     Button btnGallery;
     Button btnStartHotspot;
     Button btnStopHotspot;
-    ImageView imageview;
 
     Context context = this;
     startHotSpot hotspot;
@@ -153,26 +152,3 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-
-
-/*
-    // Same method that is in NewPhotoMonitorJob.class.  This is used to start the JobService.
-    // After this initial call, NewPhotoMonitorJob is self-running
-    public void scheduleJob() {
-        //JobScheduler js;
-        //js = (JobScheduler) getSystemService(JobScheduler.class);
-        JobInfo JOB_INFO;
-        //System.out.println(getPackageName().toString());
-        JobInfo.Builder builder = new JobInfo.Builder(JobIds.PHOTOS_CONTENT_JOB,
-                new ComponentName("com.gmoney.photosqrl", NewPhotoMonitorJob.class.getName()));
-        // look for specific changes to images in the provider
-        builder.addTriggerContentUri(new JobInfo.TriggerContentUri(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                JobInfo.TriggerContentUri.FLAG_NOTIFY_FOR_DESCENDANTS));
-        // also look for general reports of changes in the overall provider
-        builder.addTriggerContentUri(new JobInfo.TriggerContentUri(MEDIA_URI, 0));
-        JOB_INFO = builder.build();
-        js.schedule(JOB_INFO);
-    }
-
- */
