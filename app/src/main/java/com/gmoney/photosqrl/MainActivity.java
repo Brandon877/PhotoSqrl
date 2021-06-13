@@ -12,12 +12,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.InetAddress;
 
 import static com.gmoney.photosqrl.NewPhotoMonitorJob.MEDIA_URI;
 
@@ -39,15 +44,22 @@ public class MainActivity extends AppCompatActivity {
     Button btnGallery;
     Button btnStartHotspot;
     Button btnStopHotspot;
+    Button btnCheckForDevices;
 
     Context context = this;
     startHotSpot hotspot;
+
+    SqrlClientSocket sqrlSocket;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // to be taken out and socket work needs to be added into async task instead-----------
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        //----------------------------------------------------------------------------------------
         setupClickListener();
         createGallery();
         js = (JobScheduler) getSystemService(JobScheduler.class);
@@ -71,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         btnGallery = findViewById(R.id.button_gallery);
         btnStartHotspot = findViewById(R.id.button_start_hotspot);
         btnStopHotspot = findViewById(R.id.button_stop_hotspot);
+        btnCheckForDevices = findViewById(R.id.button_check_for_devices);
 
         btnStartService.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +118,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 requestWifiPermissions();
                 hotspot.shutDownHotSpot();
+            }
+        });
+        btnCheckForDevices.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestMediaPermissions();
+                connectToServer();
+                sendPhotos();
             }
         });
     }
@@ -151,4 +172,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void connectToServer() {
+        SqrlClientSocket socket = new SqrlClientSocket(this);
+        if (socket.connectedToServer) {
+            sqrlSocket = socket;
+        }
+        else {
+            sqrlSocket = null;
+        }
+    }
+
+    public void sendPhotos() {
+        sqrlSocket.sendPhoto();
+    }
 }

@@ -9,7 +9,10 @@ import android.app.Service;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -20,17 +23,21 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import java.util.concurrent.TimeUnit;
+
 import static com.gmoney.photosqrl.NewPhotoMonitorJob.MEDIA_URI;
 
 public class ForegroundService extends Service {
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
     public static NewPhotoMonitorJob job;
     static JobScheduler js;
+    startHotSpot hotspot;
 
     @Override
     public void onCreate() {
         super.onCreate();
         js = (JobScheduler) getSystemService(JobScheduler.class);
+        hotspot = new startHotSpot(ForegroundService.this);
     }
 
     @Override
@@ -93,6 +100,59 @@ public class ForegroundService extends Service {
         builder.addTriggerContentUri(new JobInfo.TriggerContentUri(MEDIA_URI, 0));
         JOB_INFO = builder.build();
         js.schedule(JOB_INFO);
+    }
+
+    // checks if phone is connected to specified wifi network
+    public boolean isConnectedTo(String ssid, Context context) {
+        boolean retVal = false;
+        WifiManager wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifi.getConnectionInfo();
+        if (wifiInfo != null) {
+            String currentConnectedSSID = wifiInfo.getSSID();
+            if (currentConnectedSSID != null && ssid.equals(currentConnectedSSID)) {
+                retVal = true;
+            }
+        }
+        return retVal;
+    }
+
+    // handles all of the work monitoring for conditions, then transferring files
+    public void monitorTransferConditions() {
+        // start new thread to handle monitoring for wifi and then sending photos
+
+        // connected to correct wifi
+        if (isConnectedTo("ATT957x71F", ForegroundService.this)) {
+            hotspot.beginSharingWifi();
+            
+        }
+
+
+
+
+
+
+
+
+
+
+        // NOT connected to correct wifi
+        else {
+            try {
+                TimeUnit.MINUTES.sleep(30);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    // returns true and starts local wifi sharing
+    public boolean checkWifiNetwork() {
+        if (isConnectedTo("ATT957x71F", ForegroundService.this)) {
+            hotspot.beginSharingWifi();
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

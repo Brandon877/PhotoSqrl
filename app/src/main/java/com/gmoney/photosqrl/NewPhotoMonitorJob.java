@@ -256,7 +256,7 @@ public class NewPhotoMonitorJob extends JobService implements CopyPhotosCallback
     public void saveBitmapToFile(Bitmap bitmap) {
         try {
             FileOutputStream out = new FileOutputStream("/data/user/0/com.gmoney.photosqrl/files/SqrlNutz/");
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
         }
         catch (IOException e) {
