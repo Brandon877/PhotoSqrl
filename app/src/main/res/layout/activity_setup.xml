@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SetupActivity">
+
+    <TextView
+        android:id="@+id/setup_instructions"
+        android:layout_width="match_parent"
+        android:layout_height="258dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/setup_instructions"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/ip_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="75dp"
+        android:text="@string/ip_address"
+        android:textSize="23sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/setup_instructions" />
+
+    <EditText
+        android:id="@+id/ip1"
+        android:label="@string/label_ip1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="17dp"
+        android:ems="3"
+        android:gravity="center"
+        android:hint="@string/ip_hint"
+        android:inputType="number"
+        android:textSize="23sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ip_address"
+        android:importantForAutofill="no" />
+
+    <TextView
+        android:id="@+id/dot1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:text="@string/dot"
+        android:gravity="center"
+        android:textSize="23sp"
+        app:layout_constraintStart_toEndOf="@+id/ip1"
+        app:layout_constraintTop_toBottomOf="@+id/ip_address" />
+
+    <EditText
+        android:id="@+id/ip2"
+        android:label="@string/label_ip2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:ems="3"
+        android:hint="@string/ip_hint"
+        android:gravity="center"
+        android:inputType="number"
+        android:textSize="23sp"
+        app:layout_constraintStart_toEndOf="@+id/dot1"
+        app:layout_constraintTop_toBottomOf="@+id/ip_address"
+        android:importantForAutofill="no" />
+
+    <TextView
+        android:id="@+id/dot2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:text="@string/dot"
+        android:gravity="center"
+        android:textSize="23sp"
+        app:layout_constraintStart_toEndOf="@+id/ip2"
+        app:layout_constraintTop_toBottomOf="@+id/ip_address" />
+
+    <EditText
+        android:id="@+id/ip3"
+        android:label="@string/label_ip3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:ems="3"
+        android:hint="@string/ip_hint"
+        android:gravity="center"
+        android:inputType="number"
+        android:textSize="23sp"
+        app:layout_constraintStart_toEndOf="@+id/dot2"
+        app:layout_constraintTop_toBottomOf="@+id/ip_address"
+        android:importantForAutofill="no" />
+
+    <TextView
+        android:id="@+id/dot3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:text="@string/dot"
+        android:gravity="center"
+        android:textSize="23sp"
+        app:layout_constraintStart_toEndOf="@+id/ip3"
+        app:layout_constraintTop_toBottomOf="@+id/ip_address" />
+
+    <EditText
+        android:id="@+id/ip4"
+        android:label="@string/label_ip4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:ems="3"
+        android:hint="@string/ip_hint"
+        android:gravity="center"
+        android:inputType="number"
+        android:textSize="23sp"
+        app:layout_constraintStart_toEndOf="@+id/dot3"
+        app:layout_constraintTop_toBottomOf="@+id/ip_address"
+        android:importantForAutofill="no" />
+
+    <TextView
+        android:id="@+id/port_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/port_number"
+        android:textSize="23sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ip1" />
+
+    <EditText
+        android:id="@+id/port_number_entry"
+        android:label="@string/label_port"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="243dp"
+        android:layout_marginTop="17dp"
+        android:ems="5"
+        android:gravity="center"
+        android:hint="@string/port_hint"
+        android:inputType="number"
+        android:textSize="23sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/port_number"
+        android:importantForAutofill="no" />
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="30dp"
+        android:text="@string/save"
+        android:textSize="23sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,6 +10,7 @@ public class Nutz {
     public static ArrayList<Nutz> nutz;
     static Context context;
     String pathName;
+    byte[] photoBytes;
 
     // used for creating ArrayList of nutz
     public Nutz(Context context) {
@@ -25,6 +26,14 @@ public class Nutz {
     // returns path for given nut
     public String getPathName() {
         return pathName;
+    }
+
+    public void setByteArray(byte[] bytes) {
+        this.photoBytes = bytes;
+    }
+
+    public byte[] getByteArray() {
+        return photoBytes;
     }
 
     // gets path for each image in folder and save it as a Nutz object

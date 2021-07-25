@@ -32,12 +32,14 @@ public class ForegroundService extends Service {
     public static NewPhotoMonitorJob job;
     static JobScheduler js;
     startHotSpot hotspot;
+    ReadyToTransferAlarm alarm = new ReadyToTransferAlarm();
 
     @Override
     public void onCreate() {
         super.onCreate();
         js = (JobScheduler) getSystemService(JobScheduler.class);
         hotspot = new startHotSpot(ForegroundService.this);
+        // initialize new thread here
     }
 
     @Override
@@ -62,7 +64,14 @@ public class ForegroundService extends Service {
 
         //stopSelf()
 
+        // set alarm to notify when time for transfer
+        alarm.setNextAlarm(this, 17, 22);
         return START_STICKY;
+    }
+
+    @Override
+    public void onStart(Intent intent, int startId) {
+        alarm.setNextAlarm(this, 15, 18);
     }
 
     @Override
@@ -125,16 +134,6 @@ public class ForegroundService extends Service {
             hotspot.beginSharingWifi();
             
         }
-
-
-
-
-
-
-
-
-
-
         // NOT connected to correct wifi
         else {
             try {

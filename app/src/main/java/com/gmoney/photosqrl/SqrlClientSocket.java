@@ -2,45 +2,42 @@ package com.gmoney.photosqrl;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Handler;
-import android.widget.Toast;
+import android.content.SharedPreferences;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+/****************** Socket codes **********************************************************
+ * -999 : Sent by server to inform client photo size has been received
+ * -555 : Sent by server to inform client that all bytes for a single photo have been sent
+ * -111 : Sent by client to inform serve that ALL photos have been sent
+ ****************************************************************************************8*/
 
 public class SqrlClientSocket extends Activity {
-    int port = 8770;
+    int port;
     Socket server;
     DataOutputStream out;
     DataInputStream in;
     boolean connectedToServer = false;
-    static ArrayList<byte[]> imageByteArrays;
+    //static ArrayList<byte[]> imageByteArrays;
+    //static ArrayList<String> imagePaths;
     Context mContext;
+    Nutz sqrlNutz;
 
-    public SqrlClientSocket(Context context) {
+    // when initializing class, attempt is made to connect to connect to server.
+    // context used for accessing file dir
+    public SqrlClientSocket(Context context, Nutz nutz) {
         mContext = context;
         if (connectToServer()) {
             System.out.println("Connected to server, ready to send photo to PC");
-            imageByteArrays = prepareAllPhotosToSend();
+            prepareAllPhotosToSend();
+            sqrlNutz = nutz;
             connectedToServer = true;
         }
         else {
@@ -48,12 +45,15 @@ public class SqrlClientSocket extends Activity {
         }
     }
 
+    // connects to server and initializes streams
+    // 192.168.1.139
     public boolean connectToServer() {
-        String serverIp = "192.168.0.14";
-        //String serverIp = "remote1";
+        String serverIp = getIp();
+        port = Integer.parseInt(getPort());
         try {
             server = new Socket(serverIp, port);
             out = new DataOutputStream(server.getOutputStream());
+            in = new DataInputStream(server.getInputStream());
             return true;
         }
         catch (Exception e) {
@@ -63,13 +63,55 @@ public class SqrlClientSocket extends Activity {
         return false;
     }
 
+    // iterates through each Nutz object's byte array.  For each byte array, size of photo
+    // is first sent to server, server then responds when size is received.  Next the byte array
+    // of the photo is sent to the server.  Finally wait for wait for confirmation from server
+    // that photo was received before iterating to next photo byte array.  After all photos sent,
+    // sends code to server informing it no more photos will be sent before closing socket.
     public void sendPhoto() {
         try {
-            //ArrayList<byte[]> photosToSend = prepareAllPhotosToSend();
-            out.write(imageByteArrays.get(0));
-            //out.write(-1);
+            for (Nutz nut : sqrlNutz.nutz) {
+                byte[] photoBytes = nut.getByteArray();
+                int arrLength = photoBytes.length;
+                System.out.println("Array length: " + arrLength);
 
-            System.out.println("Photo has been sent");
+                // send size of photo
+                out.writeInt(arrLength);
+
+                // wait for confirmation size was received
+                boolean clientReady = false;
+                System.out.println("Waiting for server to confirm receipt of image size...");
+                while (!clientReady) {
+                    int serverResponse = in.readInt();
+                    if (serverResponse == -999) {
+                        clientReady = true;
+                        System.out.println("Received code -999.  Server received image size");
+                    }
+                }
+
+                // send image
+                out.write(photoBytes);
+                System.out.println("Photo has been sent");
+
+                // wait for confirmation photo was received
+                clientReady = false;
+                System.out.println("Waiting for server to confirm receipt of image...");
+                while (!clientReady) {
+                    int serverResponse = in.readInt();
+                    if (serverResponse == -555) {
+                        clientReady = true;
+                        File file = new File(nut.getPathName());
+                        if (file.delete()) {
+                            System.out.println("File deleted");
+                        }
+                        else {
+                            System.out.println("File not deleted");
+                    }
+                        System.out.println("Received code -555.  Server received image");
+                    }
+                }
+            }
+            out.writeInt(-111);
             server.close();
         }
         catch (IOException e) {
@@ -77,6 +119,7 @@ public class SqrlClientSocket extends Activity {
         }
     }
 
+    // returns a byte array of file passed in
     public byte[] convertImageToBytes(File file) throws IOException {
         int size = (int) file.length();
         byte[] bytes = new byte[size];
@@ -101,26 +144,40 @@ public class SqrlClientSocket extends Activity {
         finally {
             fis.close();
         }
-        //imageByteArrays.add(bytes);
         return bytes;
     }
 
-    // iterates through each photo in folder and converts to byte array, saving array inside
-    // class var "imageByteArray"
-    public ArrayList<byte[]> prepareAllPhotosToSend() {
-        ArrayList<byte[]> photosToSend = new ArrayList<>();
-        String dir = mContext.getExternalFilesDir("SqrlNutz").toString();
-        File galleryDir = new File(dir);
-        System.out.println("Folder image gallery images are pulled from: " + galleryDir.getPath());
-        for (File photo : galleryDir.listFiles()) {
+    // iterates through each Nutz object and retrieves path to photo.  From the path it then creates
+    // a byte array for the photo and saves byte array to to the Nutz object for later retrieval.
+    public void prepareAllPhotosToSend() {
+    //public ArrayList<byte[]> prepareAllPhotosToSend() {
+        //sqrlNutz = new Nutz(mContext);
+        for (Nutz nut : sqrlNutz.nutz) {
+            String pathName = nut.getPathName();
+            System.out.println("PATH NAME IS: " + pathName);
+            File photo = new File(pathName);
+
             try {
                 byte[] photoBytes = convertImageToBytes(photo);
-                photosToSend.add(photoBytes);
+                nut.setByteArray(photoBytes);
             }
             catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return photosToSend;
+    }
+
+    private String getIp() {
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        String defaultIp = getResources().getString(R.string.saved_ip_address_default_key);
+        String ip = sharedPref.getString(getString(R.string.saved_ip_address_key), defaultIp);
+        return ip;
+    }
+
+    private String getPort() {
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        String defaultPort = getResources().getString(R.string.saved_port_number_default_key);
+        String port = sharedPref.getString(getString(R.string.saved_port_number_key), defaultPort);
+        return port;
     }
 }
