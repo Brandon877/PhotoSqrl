@@ -39,21 +39,22 @@ public class MainActivity extends AppCompatActivity {
     private String full_path_to_gallery;
     static JobScheduler js;
 
-    Button btnStartService;
-    Button btnStopService;
+    Button btnStartStopService;
     Button btnGallery;
-    Button btnStartHotspot;
+    Button btnSetup;
     Button btnStopHotspot;
     Button btnCheckForDevices;
 
     Context context = this;
     startHotSpot hotspot;
 
+    Nutz sqrlNutz;
     SqrlClientSocket sqrlSocket;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent intent = getIntent();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // to be taken out and socket work needs to be added into async task instead-----------
@@ -63,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         setupClickListener();
         createGallery();
         js = (JobScheduler) getSystemService(JobScheduler.class);
-        hotspot = new startHotSpot(context);
+        //hotspot = new startHotSpot(context);
+        sqrlNutz = new Nutz(this);
     }
 
     public void createGallery() {
@@ -78,26 +80,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setupClickListener() {
-        btnStartService = findViewById(R.id.button_start_service);
-        btnStopService = findViewById(R.id.button_stop_service);
+        btnStartStopService = findViewById(R.id.button_start_stop_service);
         btnGallery = findViewById(R.id.button_gallery);
-        btnStartHotspot = findViewById(R.id.button_start_hotspot);
+        btnSetup = findViewById(R.id.button_setup);
         btnStopHotspot = findViewById(R.id.button_stop_hotspot);
         btnCheckForDevices = findViewById(R.id.button_check_for_devices);
 
-        btnStartService.setOnClickListener(new View.OnClickListener() {
+        btnStartStopService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestMediaPermissions();
-                startService();
+                startServiceActivity();
             }
         });
-        btnStopService.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopService();
-            }
-        });
+
         btnGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,13 +101,14 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivity(intent);
             }
         });
-        btnStartHotspot.setOnClickListener(new View.OnClickListener() {
+
+        btnSetup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestWifiPermissions();
-                hotspot.beginSharingWifi();
+                startSetupActivity();
             }
         });
+        /*
         btnStopHotspot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,29 +124,20 @@ public class MainActivity extends AppCompatActivity {
                 sendPhotos();
             }
         });
-    }
 
-    public void startService() {
-        Intent serviceIntent = new Intent(this, ForegroundService.class);
-        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
-
-        ContextCompat.startForegroundService(this, serviceIntent);
+         */
     }
-
-    public void stopService() {
-        Intent serviceIntent = new Intent(this, ForegroundService.class);
-        stopService(serviceIntent);
-    }
+/*
 
     public void requestMediaPermissions() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE)
             != PackageManager.PERMISSION_GRANTED) {
             final String[] permissions = new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_WIFI_STATE};
             ActivityCompat.requestPermissions(this, permissions, 0);
         }
     }
-
+*/
     public void requestWifiPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -166,20 +153,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void printPaths() {
-        Nutz SqrlNutz = new Nutz(MainActivity.this);
-        for (Nutz nut : SqrlNutz.nutz) {
+        //Nutz SqrlNutz = new Nutz(MainActivity.this);
+        for (Nutz nut : sqrlNutz.nutz) {
             System.out.println(nut.getPathName());
         }
     }
 
+    // attempt to connect to server.  if connection is made, assigns socket to class var sqrlSocket
+    // if not connection is made, return null socket
     public void connectToServer() {
-        SqrlClientSocket socket = new SqrlClientSocket(this);
+        SqrlClientSocket socket = new SqrlClientSocket(this, sqrlNutz);
         if (socket.connectedToServer) {
             sqrlSocket = socket;
         }
         else {
             sqrlSocket = null;
         }
+    }
+
+    private void startSetupActivity() {
+        Intent intent = new Intent(MainActivity.this, SetupActivity.class);
+        MainActivity.this.startActivity(intent);
+    }
+
+    private void startServiceActivity() {
+        Intent intent = new Intent(MainActivity.this, StartStopServiceActivity.class);
+        MainActivity.this.startActivity(intent);
     }
 
     public void sendPhotos() {

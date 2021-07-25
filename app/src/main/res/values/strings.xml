@@ -1,3 +1,71 @@
 <resources>
+
+    <string name="saved_ip_address_key">savedIpAddress</string>
+    <string name="saved_ip_address_default_key">000.000.000.000</string>
+    <string name="saved_port_number_key">savedPortNumber</string>
+    <string name="saved_port_number_default_key">8770</string>
+
+
+
     <string name="app_name">Photo Sqrl</string>
+
+    <string name="ip_address">IP ADDRESS:</string>
+
+    <string name="port_number">PORT NUMBER:</string>
+
+    <string name="ip_hint">000</string>
+
+    <string name="port_hint">00000</string>
+
+    <string name="dot">.</string>
+
+    <string name="save">Save</string>
+
+
+
+    <string name="label_ip1">Enter first set of IP address numbers</string>
+
+    <string name="label_ip2">Enter second set of IP address numbers</string>
+
+    <string name="label_ip3">Enter third set of IP address numbers</string>
+
+    <string name="label_ip4">Enter fourth set of IP address numbers</string>
+
+    <string name="label_port">Enter the port number</string>
+
+    <string name="service_instructions">
+        <br>
+            This is where you can start or stop this app\'s service. In order for this app to function
+            correctly, I recommend allowing this service to run continuously.  While the service
+            is running, it does two things:
+        </br>
+        <br></br>
+        <br>
+            First, it listens for any new photos taken and saves a copy to eventually transfer(Photos
+            awaiting transfer maybe viewed in this app\'s gallery).
+        </br>
+        <br></br>
+        <br>
+            Second, it keeps track of when this app will attempt to begin transferring the photos.
+        </br>
+    </string>
+
+    <string name="setup_instructions">
+        <br>
+            Please fill out these fields before using this app.
+        </br>
+        <br></br>
+        <br>
+            IP ADDRESS - Enter the IP address of the computer that will be receiving the photos.  I
+            recommend assigning a static IP address to that computer.
+        </br>
+        <br></br>
+        <br>
+            PORT NUMBER - Enter the port number you will be using for the transfer.  The number you
+            pick must be the same as the one you choose for the computer receiving the photos.
+        </br>
+    </string>
+
+
+
 </resources>
